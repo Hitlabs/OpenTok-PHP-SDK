@@ -254,6 +254,21 @@ class Client extends \Guzzle\Http\Client {
 		return $sessionListJson;
 	}
 
+	public function signalSession($sessionId, $body) {
+		$request = $this->post('/v2/project/' . $this->apiKey . '/session/' . $sessionId . "/signal");
+		$request->setBody(json_encode($body));
+		$request->setHeader('Content-Type', 'application/json');
+		// if ($offset != 0) $request->getQuery()->set('offset', $offset);
+		// if (!empty($count)) $request->getQuery()->set('count', $count);
+		try {
+			$signalJson = $request->send()->json();
+		} catch (\Exception $e) {
+			$this->handleException($e);
+			return;
+		}
+		return $signalJson;
+	}
+
 	// Helpers
 
 	private function postFieldsForOptions($options) {
