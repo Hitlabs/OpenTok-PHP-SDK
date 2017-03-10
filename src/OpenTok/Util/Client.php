@@ -261,12 +261,12 @@ class Client extends \Guzzle\Http\Client {
 		// if ($offset != 0) $request->getQuery()->set('offset', $offset);
 		// if (!empty($count)) $request->getQuery()->set('count', $count);
 		try {
-			$signalJson = $request->send()->json();
+			$response = $request->send(); // For some reason we're not getting back any response from this endpoint
 		} catch (\Exception $e) {
 			$this->handleException($e);
 			return;
 		}
-		return $signalJson;
+		return true;
 	}
 
 	// Helpers
