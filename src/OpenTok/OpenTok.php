@@ -538,6 +538,16 @@ class OpenTok {
 		return $streams;
 	}
 
+	public function signalSession($sessionId, $data) {
+		try {
+			$signal = $this->client->signalSession($sessionId, $data);
+		} catch (DomainException $e) {
+			return false;
+		}
+
+		return $signal;
+	}
+
 	/** @internal */
 	private function _sign_string($string, $secret) {
 		return hash_hmac("sha1", $string, $secret);
