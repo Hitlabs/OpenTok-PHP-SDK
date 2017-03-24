@@ -1,5 +1,4 @@
 <?php
-
 namespace OpenTok\Util;
 
 use OpenTok\Exception\ArchiveAuthenticationException;
@@ -72,7 +71,7 @@ class Client extends \Guzzle\Http\Client {
 	public function startArchive($sessionId, $options) {
 		// set up the request
 		$request = $this->post('/v2/partner/' . $this->apiKey . '/archive');
-		$request->setBody(json_encode(array_merge(array('sessionId' => $sessionId), $options)));
+		$request->setBody(json_encode(array_merge(['sessionId' => $sessionId], $options)));
 		$request->setHeader('Content-Type', 'application/json');
 
 		try {
@@ -122,7 +121,7 @@ class Client extends \Guzzle\Http\Client {
 
 	public function listArchives($offset, $count) {
 		$request = $this->get('/v2/partner/' . $this->apiKey . '/archive');
-		if ($offset != 0) {
+		if (0 != $offset) {
 			$request->getQuery()->set('offset', $offset);
 		}
 
@@ -141,10 +140,10 @@ class Client extends \Guzzle\Http\Client {
 
 	public function startBroadcast($sessionId, $options) {
 		$request = $this->post('/v2/project/' . $this->apiKey . '/broadcast');
-		$request->setBody(json_encode(array(
+		$request->setBody(json_encode([
 			'sessionId' => $sessionId,
 			'layout' => $options['layout']->jsonSerialize(),
-		)));
+		]));
 		$request->setHeader('Content-Type', 'application/json');
 
 		try {
@@ -211,14 +210,14 @@ class Client extends \Guzzle\Http\Client {
 	}
 
 	public function dial($sessionId, $token, $sipUri, $options) {
-		$body = array(
+		$body = [
 			'sessionId' => $sessionId,
 			'token' => $token,
-			'sip' => array(
+			'sip' => [
 				'uri' => $sipUri,
 				'secure' => $options['secure'],
-			),
-		);
+			],
+		];
 
 		if (isset($options) && array_key_exists('headers', $options) && sizeof($options['headers']) > 0) {
 			$body['sip']['headers'] = $options['headers'];
@@ -242,16 +241,14 @@ class Client extends \Guzzle\Http\Client {
 	}
 
 	public function listStreams($sessionId) {
-		$request = $this->get('/v2/project/' . $this->apiKey . '/session/' . $sessionId . "/stream/");
-		// if ($offset != 0) $request->getQuery()->set('offset', $offset);
-		// if (!empty($count)) $request->getQuery()->set('count', $count);
 		try {
+			$request = $this->get('/v2/project/' . $this->apiKey . '/session/' . $sessionId . "/stream/");
 			$sessionListJson = $request->send()->json();
+			return $sessionListJson;
 		} catch (\Exception $e) {
 			$this->handleException($e);
 			return;
 		}
-		return $sessionListJson;
 	}
 
 	public function signalSession($sessionId, $body) {
