@@ -296,7 +296,7 @@ class OpenTok {
             'resolution' => null,
             'layout' => array(
                 'type' => 'custom',
-                'stylesheet' => 'stream { border-radius: 50%; width: 200px; height: 200px; }'
+                'stylesheet' => 'stream { width: 200px; height: 200px; }'
             )
         );
         $options = array_merge($defaults, array_intersect_key($options, $defaults));
