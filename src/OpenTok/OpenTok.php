@@ -294,6 +294,7 @@ class OpenTok {
             'hasAudio' => true,
             'outputMode' => OutputMode::COMPOSED,
             'resolution' => null,
+            'layout' => array('type' => 'verticalPresentation')
         );
         $options = array_merge($defaults, array_intersect_key($options, $defaults));
         list($name, $hasVideo, $hasAudio, $outputMode, $resolution) = array_values($options);
