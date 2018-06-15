@@ -288,7 +288,7 @@ class OpenTok {
         }
         
 
-        $stylesheet = "stream {
+        $stylesheet =  <<<stream {
           float:left;
           margin-top: 60%;
           width: 20%;
@@ -301,7 +301,7 @@ class OpenTok {
           margin-top: 0px;
           height: 80%;
           width: 100%;
-        }"
+        };
 
         // unpack optional arguments (merging with default values) into named variables
         $defaults = array(
