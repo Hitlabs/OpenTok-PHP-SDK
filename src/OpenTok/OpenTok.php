@@ -95,7 +95,8 @@ class OpenTok {
         $defaults = array(
             'role' => Role::PUBLISHER,
             'expireTime' => null,
-            'data' => null
+            'data' => null,
+            ''
         );
         $options = array_merge($defaults, array_intersect_key($options, $defaults));
         list($role, $expireTime, $data) = array_values($options);
@@ -292,6 +293,7 @@ class OpenTok {
 stream {
   float: left;
   left: 0px;
+  clear: left;
   width: 20%;
   height: 20%;
 }
