@@ -292,7 +292,7 @@ class OpenTok {
         $stylesheet = <<<EOD
 stream {
   float:left;
-  margin-top: 60%;
+  margin-top: 80%;
   width: 20%;
   height: 20%;
 }
