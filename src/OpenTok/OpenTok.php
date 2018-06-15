@@ -292,6 +292,7 @@ class OpenTok {
         $stylesheet = <<<EOD
 stream {
   float: left;
+  object-fit: cover;
 }
 stream:first-child:nth-last-child(1) {
   width: 100%;
