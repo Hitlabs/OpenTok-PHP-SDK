@@ -288,7 +288,8 @@ class OpenTok {
         }
         
 
-        $stylesheet = <<<EOD``stream \{
+        $stylesheet = <<<EOD
+        stream \{
           float:left;
           margin-top: 60%;
           width: 20%;
