@@ -294,11 +294,9 @@ stream {
   left: 0px;
   width: 20%;
   height: 20%;
-  padding: 0px;
 }
 stream.focus {
   position: absolute;
-  padding: 0px;
   top: 0;
   left: 0;
   margin: 0px;
