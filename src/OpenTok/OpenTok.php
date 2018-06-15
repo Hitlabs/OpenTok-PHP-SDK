@@ -287,6 +287,22 @@ class OpenTok {
             $options = array('name' => $options);
         }
         
+
+        $stylesheet = "stream {
+          float:left;
+          margin-top: 60%;
+          width: 20%;
+          height: 20%;
+        }
+        stream.focus {
+          position: absolute;
+          top: 0;
+          left: 0;
+          margin-top: 0px;
+          height: 80%;
+          width: 100%;
+        }"
+
         // unpack optional arguments (merging with default values) into named variables
         $defaults = array(
             'name' => null,
@@ -296,7 +312,7 @@ class OpenTok {
             'resolution' => null,
             'layout' => array(
                 'type' => 'custom',
-                'stylesheet' => 'stream { width: 200px; height: 200px; }'
+                'stylesheet' => $stylesheet
             )
         );
         $options = array_merge($defaults, array_intersect_key($options, $defaults));
