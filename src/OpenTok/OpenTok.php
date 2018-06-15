@@ -289,20 +289,24 @@ class OpenTok {
         
 
         $stylesheet = <<<EOD
-        stream {
-          float:left;
-          margin-top: 60%;
-          width: 20%;
-          height: 20%;
-        }
-        stream.focus {
-          position: absolute;
-          top: 0;
-          left: 0;
-          margin-top: 0px;
-          height: 80%;
-          width: 100%;
-        }
+stream {
+  float: left;
+  left: 0px;
+  clear: left;
+  width: 20%;
+  height: 20%;
+  padding: 0px;
+}
+stream.focus {
+  position: absolute;
+  padding: 0px;
+  top: 0;
+  left: 0;
+  margin: 0px;
+  left: 20%;
+  height: 100%;
+  width: 80%;
+}
 EOD;
 
         // unpack optional arguments (merging with default values) into named variables
