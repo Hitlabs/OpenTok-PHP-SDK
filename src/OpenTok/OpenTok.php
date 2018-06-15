@@ -291,18 +291,38 @@ class OpenTok {
 
         $stylesheet = <<<EOD
 stream {
-  float:left;
-  margin-top: 80%;
-  width: 20%;
-  height: 20%;
+  float: left;
 }
-stream.focus {
-  position: absolute;
-  top: 0;
-  left: 0;
-  margin-top: 0px;
-  height: 80%;
+stream:first-child:nth-last-child(1) {
   width: 100%;
+  height: 100%;
+}
+
+stream:first-child:nth-last-child(2),
+stream:first-child:nth-last-child(2) ~ stream {
+  width: 50%;
+  height: 100%;
+}
+stream:first-child:nth-last-child(3),
+stream:first-child:nth-last-child(3) ~ stream,
+stream:first-child:nth-last-child(4),
+stream:first-child:nth-last-child(4) ~ stream {
+  width: 50%;
+  height: 50%;
+}
+stream:first-child:nth-last-child(5),
+stream:first-child:nth-last-child(5) ~ stream,
+stream:first-child:nth-last-child(6),
+stream:first-child:nth-last-child(6) ~ stream,
+stream:first-child:nth-last-child(7),
+stream:first-child:nth-last-child(7) ~ stream,
+stream:first-child:nth-last-child(8),
+stream:first-child:nth-last-child(8) ~ stream,
+stream:first-child:nth-last-child(9),
+stream:first-child:nth-last-child(9) ~ stream
+{
+  width: 33.33%;
+  height: 33.33%;
 }
 EOD;
 
