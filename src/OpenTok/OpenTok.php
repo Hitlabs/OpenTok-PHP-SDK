@@ -292,7 +292,6 @@ class OpenTok {
 stream {
   float: left;
   left: 0px;
-  clear: left;
   width: 20%;
   height: 20%;
   padding: 0px;
