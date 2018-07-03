@@ -34,7 +34,7 @@ $app = new Slim(array(
 ));
 
 // Intialize a cache, store it in the app container
-$app->container->singleton('cache', function() {
+$app->container->singleton('cache', function () {
     return new Cache;
 });
 
@@ -49,13 +49,14 @@ $app->sip = array(
   'uri' => getenv('SIP_URI'),
   'username' => getenv('SIP_USERNAME'),
   'password' => getenv('SIP_PASSWORD'),
-  'secure' => (getenv('SIP_SECURE') === 'true')
+  'secure' => (getenv('SIP_SECURE') === 'true'),
+  'from' => getenv('SIP_FROM'),
 );
 
 // Configure routes
 $app->get('/', function () use ($app) {
     // If a sessionId has already been created, retrieve it from the cache
-    $sessionId = $app->cache->getOrCreate('sessionId', array(), function() use ($app) {
+    $sessionId = $app->cache->getOrCreate('sessionId', array(), function () use ($app) {
         // If the sessionId hasn't been created, create it now and store it
         $session = $app->opentok->createSession(array('mediaMode' => MediaMode::ROUTED));
         return $session->getSessionId();
@@ -79,7 +80,8 @@ $app->post('/sip/start', function () use ($app) {
 
     // create the options parameter
     $options = array(
-      'secure' => $app->sip['secure']
+      'secure' => $app->sip['secure'],
+      'from' => $app->sip['from'],
     );
     if ($app->sip['username'] !== false) {
         $options['auth'] = array('username' => $app->sip['username'], 'password' => $app->sip['password']);

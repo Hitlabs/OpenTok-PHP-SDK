@@ -4,6 +4,8 @@ namespace OpenTok;
 
 use OpenTok\Exception\BroadcastDomainException;
 use OpenTok\Exception\BroadcastUnexpectedValueException;
+use OpenTok\Exception\InvalidArgumentException;
+use OpenTok\Util\Client;
 use OpenTok\Util\Validators;
 
 class Broadcast {
@@ -13,7 +15,8 @@ class Broadcast {
     private $isStopped = false;
     private $client;
 
-    public function __construct($broadcastData, $options = array()) {
+    public function __construct($broadcastData, $options = array())
+    {
         // unpack optional arguments (merging with default values) into named variables
         $defaults = array(
             'apiKey' => null,
