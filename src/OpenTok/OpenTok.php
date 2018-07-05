@@ -2,31 +2,32 @@
 
 namespace OpenTok;
 
-use OpenTok\Session;
 use OpenTok\Archive;
-use OpenTok\Broadcast;
-use OpenTok\Layout;
-use OpenTok\Role;
-use OpenTok\MediaMode;
 use OpenTok\ArchiveMode;
+use OpenTok\Broadcast;
+use OpenTok\Exception\DomainException;
+use OpenTok\Exception\InvalidArgumentException;
+use OpenTok\Exception\UnexpectedValueException;
+use OpenTok\Layout;
+use OpenTok\MediaMode;
 use OpenTok\OutputMode;
+use OpenTok\Role;
+use OpenTok\Session;
 use OpenTok\Util\Client;
 use OpenTok\Util\Validators;
 
-use OpenTok\Exception\UnexpectedValueException;
-use OpenTok\Exception\InvalidArgumentException;
-
 /**
-* Contains methods for creating OpenTok sessions, generating tokens, and working with archives.
-* <p>
-* To create a new OpenTok object, call the OpenTok() constructor with your OpenTok API key
-* and the API secret for your <a href="https://tokbox.com/account">TokBox account</a>. Do not
-* publicly share your API secret. You will use it with the OpenTok() constructor (only on your web
-* server) to create OpenTok sessions.
-* <p>
-* Be sure to include the entire OpenTok server SDK on your web server.
-*/
-class OpenTok {
+ * Contains methods for creating OpenTok sessions, generating tokens, and working with archives.
+ * <p>
+ * To create a new OpenTok object, call the OpenTok() constructor with your OpenTok API key
+ * and the API secret for your <a href="https://tokbox.com/account">TokBox account</a>. Do not
+ * publicly share your API secret. You will use it with the OpenTok() constructor (only on your web
+ * server) to create OpenTok sessions.
+ * <p>
+ * Be sure to include the entire OpenTok server SDK on your web server.
+ */
+class OpenTok
+{
 
     /** @internal */
     private $apiKey;
@@ -95,7 +96,7 @@ class OpenTok {
         $defaults = array(
             'role' => Role::PUBLISHER,
             'expireTime' => null,
-            'data' => null
+            'data' => null,
         );
         $options = array_merge($defaults, array_intersect_key($options, $defaults));
         list($role, $expireTime, $data) = array_values($options);
@@ -119,79 +120,79 @@ class OpenTok {
     }
 
     /**
-    * Creates a new OpenTok session and returns the session ID, which uniquely identifies
-    * the session.
-    * <p>
-    * For example, when using the OpenTok JavaScript library, use the session ID when calling the
-    * <a href="http://tokbox.com/opentok/libraries/client/js/reference/OT.html#initSession">
-    * OT.initSession()</a> method (to initialize an OpenTok session).
-    * <p>
-    * OpenTok sessions do not expire. However, authentication tokens do expire (see the
-    * generateToken() method). Also note that sessions cannot explicitly be destroyed.
-    * <p>
-    * A session ID string can be up to 255 characters long.
-    * <p>
-    * Calling this method results in an OpenTokException in the event of an error.
-    * Check the error message for details.
-    * <p>
-    * You can also create a session by logging in to your
-    * <a href="https://tokbox.com/account">TokBox account</a>.
-    *
-    * @param array $options (Optional) This array defines options for the session. The array includes
-    * the following keys (all of which are optional):
-    *
-    * <ul>
-    *
-    *    <li><code>'archiveMode'</code> (ArchiveMode) &mdash; Whether the session is automatically
-    *    archived (<code>ArchiveMode::ALWAYS</code>) or not (<code>ArchiveMode::MANUAL</code>).
-    *    By default, the setting is <code>ArchiveMode.MANUAL</code>, and you must call the
-    *    <code>OpenTok->startArchive()</code> method to start archiving. To archive the session
-    *    (either automatically or not), you must set the <code>mediaMode</code> key to
-    *    <code>MediaMode::ROUTED</code>.</li>
-    *
-    *    <li><code>'location'</code> (String) &mdash; An IP address that the OpenTok servers
-    *    will use to situate the session in its global network. If you do not set a location hint,
-    *    the OpenTok servers will be based on the first client connecting to the session.</li>
-    *
-    *     <li><code>'mediaMode'</code> (MediaMode) &mdash; Whether the session will transmit
-    *     streams using the OpenTok Media Router (<code>MediaMode.ROUTED</code>) or not
-    *     (<code>MediaMode.RELAYED</code>). By default, the <code>mediaMode</code> property
-    *     is set to <code>MediaMode.RELAYED</code>.
-    *
-    *     <p>
-    *     With the <code>mediaMode</code> parameter set to <code>MediaMode.RELAYED</code>, the
-    *     session will attempt to transmit streams directly between clients. If clients cannot
-    *     connect due to firewall restrictions, the session uses the OpenTok TURN server to relay
-    *     audio-video streams.
-    *
-    *     <p>
-    *     The
-    *     <a href="https://tokbox.com/opentok/tutorials/create-session/#media-mode" target="_top">
-    *     OpenTok Media Router</a> provides the following benefits:
-    *
-    *     <ul>
-    *       <li>The OpenTok Media Router can decrease bandwidth usage in multiparty sessions.
-    *           (When the <code>mediaMode</code> parameter is set to <code>MediaMode.ROUTED</code>,
-    *           each client must send a separate audio-video stream to each client subscribing to
-    *           it.)</li>
-    *       <li>The OpenTok Media Router can improve the quality of the user experience through
-    *         recovery</a>. With these features, if a client's connectivity degrades to a degree
-    *         that it does not support video for a stream it's subscribing to, the video is dropped
-    *         on that client (without affecting other clients), and the client receives audio only.
-    *         If the client's connectivity improves, the video returns.</li>
-    *       <li>The OpenTok Media Router supports the
-    *         <a href="https://tokbox.com/opentok/tutorials/archiving" target="_top">archiving</a>
-    *         feature, which lets you record, save, and retrieve OpenTok sessions.</li>
-    *     </ul>
-    *
-    * </ul>
-    *
-    * @return \OpenTok\Session A Session object representing the new session. Call the
-    * <code>getSessionId()</code> method of this object to get the session ID. For example,
-    * when using the OpenTok.js library, use this session ID when calling the
-    * <code>OT.initSession()</code> method.
-    */
-    public function createSession($options=array())
+     * Creates a new OpenTok session and returns the session ID, which uniquely identifies
+     * the session.
+     * <p>
+     * For example, when using the OpenTok JavaScript library, use the session ID when calling the
+     * <a href="http://tokbox.com/opentok/libraries/client/js/reference/OT.html#initSession">
+     * OT.initSession()</a> method (to initialize an OpenTok session).
+     * <p>
+     * OpenTok sessions do not expire. However, authentication tokens do expire (see the
+     * generateToken() method). Also note that sessions cannot explicitly be destroyed.
+     * <p>
+     * A session ID string can be up to 255 characters long.
+     * <p>
+     * Calling this method results in an OpenTokException in the event of an error.
+     * Check the error message for details.
+     * <p>
+     * You can also create a session by logging in to your
+     * <a href="https://tokbox.com/account">TokBox account</a>.
+     *
+     * @param array $options (Optional) This array defines options for the session. The array includes
+     * the following keys (all of which are optional):
+     *
+     * <ul>
+     *
+     *    <li><code>'archiveMode'</code> (ArchiveMode) &mdash; Whether the session is automatically
+     *    archived (<code>ArchiveMode::ALWAYS</code>) or not (<code>ArchiveMode::MANUAL</code>).
+     *    By default, the setting is <code>ArchiveMode.MANUAL</code>, and you must call the
+     *    <code>OpenTok->startArchive()</code> method to start archiving. To archive the session
+     *    (either automatically or not), you must set the <code>mediaMode</code> key to
+     *    <code>MediaMode::ROUTED</code>.</li>
+     *
+     *    <li><code>'location'</code> (String) &mdash; An IP address that the OpenTok servers
+     *    will use to situate the session in its global network. If you do not set a location hint,
+     *    the OpenTok servers will be based on the first client connecting to the session.</li>
+     *
+     *     <li><code>'mediaMode'</code> (MediaMode) &mdash; Whether the session will transmit
+     *     streams using the OpenTok Media Router (<code>MediaMode.ROUTED</code>) or not
+     *     (<code>MediaMode.RELAYED</code>). By default, the <code>mediaMode</code> property
+     *     is set to <code>MediaMode.RELAYED</code>.
+     *
+     *     <p>
+     *     With the <code>mediaMode</code> parameter set to <code>MediaMode.RELAYED</code>, the
+     *     session will attempt to transmit streams directly between clients. If clients cannot
+     *     connect due to firewall restrictions, the session uses the OpenTok TURN server to relay
+     *     audio-video streams.
+     *
+     *     <p>
+     *     The
+     *     <a href="https://tokbox.com/opentok/tutorials/create-session/#media-mode" target="_top">
+     *     OpenTok Media Router</a> provides the following benefits:
+     *
+     *     <ul>
+     *       <li>The OpenTok Media Router can decrease bandwidth usage in multiparty sessions.
+     *           (When the <code>mediaMode</code> parameter is set to <code>MediaMode.ROUTED</code>,
+     *           each client must send a separate audio-video stream to each client subscribing to
+     *           it.)</li>
+     *       <li>The OpenTok Media Router can improve the quality of the user experience through
+     *         recovery</a>. With these features, if a client's connectivity degrades to a degree
+     *         that it does not support video for a stream it's subscribing to, the video is dropped
+     *         on that client (without affecting other clients), and the client receives audio only.
+     *         If the client's connectivity improves, the video returns.</li>
+     *       <li>The OpenTok Media Router supports the
+     *         <a href="https://tokbox.com/opentok/tutorials/archiving" target="_top">archiving</a>
+     *         feature, which lets you record, save, and retrieve OpenTok sessions.</li>
+     *     </ul>
+     *
+     * </ul>
+     *
+     * @return \OpenTok\Session A Session object representing the new session. Call the
+     * <code>getSessionId()</code> method of this object to get the session ID. For example,
+     * when using the OpenTok.js library, use this session ID when calling the
+     * <code>OT.initSession()</code> method.
+     */
+    public function createSession($options = array())
     {
         if (array_key_exists('archiveMode', $options) &&
             $options['archiveMode'] != ArchiveMode::MANUAL) {
@@ -201,7 +202,7 @@ class OpenTok {
 
                 throw new InvalidArgumentException('A session must be routed to be archived.');
             } else {
-              $options['mediaMode'] = MediaMode::ROUTED;
+                $options['mediaMode'] = MediaMode::ROUTED;
             }
         }
 
@@ -209,7 +210,7 @@ class OpenTok {
         $defaults = array(
             'mediaMode' => MediaMode::RELAYED,
             'archiveMode' => ArchiveMode::MANUAL,
-            'location' => null
+            'location' => null,
         );
         $options = array_merge($defaults, array_intersect_key($options, $defaults));
         list($mediaMode, $archiveMode, $location) = array_values($options);
@@ -225,14 +226,14 @@ class OpenTok {
         // check response
         $sessionId = $sessionXml->Session->session_id;
         if (!$sessionId) {
-            $errorMessage = 'Failed to create a session. Server response: '. (string)$sessionXml;
+            $errorMessage = 'Failed to create a session. Server response: ' . (string) $sessionXml;
             throw new UnexpectedValueException($errorMessage);
         }
 
-        return new Session($this, (string)$sessionId, array(
+        return new Session($this, (string) $sessionId, array(
             'location' => $location,
             'mediaMode' => $mediaMode,
-            'archiveMode' => $archiveMode
+            'archiveMode' => $archiveMode,
         ));
     }
 
@@ -280,13 +281,13 @@ class OpenTok {
      * @return Archive The Archive object, which includes properties defining the archive, including
      * the archive ID.
      */
-    public function startArchive($sessionId, $options=array())
+    public function startArchive($sessionId, $options = array())
     {
         // support for deprecated method signature, remove in v3.0.0 (not before)
         if (!is_array($options)) {
             $options = array('name' => $options);
         }
-        
+
         // unpack optional arguments (merging with default values) into named variables
         $defaults = array(
             'name' => null,
@@ -306,12 +307,12 @@ class OpenTok {
 
         if ((is_null($resolution) || empty($resolution)) && $outputMode === OutputMode::COMPOSED) {
             $options['resolution'] = "640x480";
-        } else if((is_null($resolution) || empty($resolution)) && $outputMode === OutputMode::INDIVIDUAL) {
+        } else if ((is_null($resolution) || empty($resolution)) && $outputMode === OutputMode::INDIVIDUAL) {
             unset($options['resolution']);
-        } else if(!empty($resolution) && $outputMode === OutputMode::INDIVIDUAL) {
+        } else if (!empty($resolution) && $outputMode === OutputMode::INDIVIDUAL) {
             $errorMessage = "Resolution can't be specified for Individual Archives";
             throw new UnexpectedValueException($errorMessage);
-        } else if(!empty($resolution) && $outputMode === OutputMode::COMPOSED && !is_string($resolution)) {
+        } else if (!empty($resolution) && $outputMode === OutputMode::COMPOSED && !is_string($resolution)) {
             $errorMessage = "Resolution must be a valid string";
             throw new UnexpectedValueException($errorMessage);
         }
@@ -319,7 +320,7 @@ class OpenTok {
         // make API call
         $archiveData = $this->client->startArchive($sessionId, $options);
 
-        return new Archive($archiveData, array( 'client' => $this->client ));
+        return new Archive($archiveData, array('client' => $this->client));
     }
 
     /**
@@ -336,7 +337,7 @@ class OpenTok {
         Validators::validateArchiveId($archiveId);
 
         $archiveData = $this->client->stopArchive($archiveId);
-        return new Archive($archiveData, array( 'client' => $this->client ));
+        return new Archive($archiveData, array('client' => $this->client));
     }
 
     /**
@@ -354,7 +355,7 @@ class OpenTok {
         Validators::validateArchiveId($archiveId);
 
         $archiveData = $this->client->getArchive($archiveId);
-        return new Archive($archiveData, array( 'client' => $this->client ));
+        return new Archive($archiveData, array('client' => $this->client));
     }
 
     /**
@@ -391,13 +392,13 @@ class OpenTok {
      * @return ArchiveList An ArchiveList object. Call the items() method of the ArchiveList object
      * to return an array of Archive objects.
      */
-    public function listArchives($offset=0, $count=null)
+    public function listArchives($offset = 0, $count = null)
     {
         // validate params
         Validators::validateOffsetAndCount($offset, $count);
 
         $archiveListData = $this->client->listArchives($offset, $count);
-        return new ArchiveList($archiveListData, array( 'client' => $this->client ));
+        return new ArchiveList($archiveListData, array('client' => $this->client));
     }
 
     public function forceDisconnect($sessionId, $connectionId)
@@ -408,14 +409,14 @@ class OpenTok {
         return $this->client->forceDisconnect($sessionId, $connectionId);
     }
 
-    public function startBroadcast($sessionId, $options=array())
+    public function startBroadcast($sessionId, $options = array())
     {
         // unpack optional arguments (merging with default values) into named variables
         // NOTE: although the server can be authoritative about the default value of layout, its
         // not preferred to depend on that in the SDK because its then harder to garauntee backwards
         // compatibility
         $defaults = array(
-            'layout' => Layout::getBestFit()
+            'layout' => Layout::getBestFit(),
         );
         $options = array_merge($defaults, array_intersect_key($options, $defaults));
         list($layout) = array_values($options);
@@ -427,7 +428,7 @@ class OpenTok {
         // make API call
         $broadcastData = $this->client->startBroadcast($sessionId, $options);
 
-        return new Broadcast($broadcastData, array( 'client' => $this->client ));
+        return new Broadcast($broadcastData, array('client' => $this->client));
     }
 
     public function stopBroadcast($broadcastId)
@@ -439,7 +440,7 @@ class OpenTok {
         $broadcastData = $this->client->stopBroadcast($broadcastId);
         return new Broadcast($broadcastData, array(
             'client' => $this->client,
-            'isStopped' => true
+            'isStopped' => true,
         ));
     }
 
@@ -448,7 +449,7 @@ class OpenTok {
         Validators::validateBroadcastId($broadcastId);
 
         $broadcastData = $this->client->getBroadcast($broadcastId);
-        return new Broadcast($broadcastData, array( 'client' => $this->client ));
+        return new Broadcast($broadcastData, array('client' => $this->client));
     }
 
     // TODO: not yet implemented by the platform
@@ -476,7 +477,7 @@ class OpenTok {
     {
         // unpack optional arguments (merging with default values) into named variables
         $defaults = array(
-            'layoutClassList' => array()
+            'layoutClassList' => array(),
         );
         $properties = array_merge($defaults, array_intersect_key($properties, $defaults));
         list($layoutClassList) = array_values($properties);
@@ -538,7 +539,7 @@ class OpenTok {
      *
      * @return SipCall The SipCall, which contains the ids of the Sip connection.
      */
-    public function dial($sessionId, $token, $sipUri, $options=array())
+    public function dial($sessionId, $token, $sipUri, $options = array())
     {
         // unpack optional arguments (merging with default values) into named variables
         $defaults = array(
@@ -559,11 +560,33 @@ class OpenTok {
         // check response
         $id = $sipJson['id'];
         if (!$id) {
-            $errorMessage = 'Failed to initiate a SIP call. Server response: '. (string)$sipJson;
+            $errorMessage = 'Failed to initiate a SIP call. Server response: ' . (string) $sipJson;
             throw new UnexpectedValueException($errorMessage);
         }
 
         return new SipCall($sipJson);
+    }
+
+    public function listStreams($sessionId)
+    {
+        try {
+            $streams = $this->client->listStreams($sessionId);
+        } catch (DomainException $e) {
+            return false;
+        }
+
+        return $streams;
+    }
+
+    public function signalSession($sessionId, $data)
+    {
+        try {
+            $signal = $this->client->signalSession($sessionId, $data);
+        } catch (DomainException $e) {
+            return false;
+        }
+
+        return $signal;
     }
 
     /** @internal */

@@ -2,29 +2,26 @@
 
 namespace OpenTok\Util;
 
-use GuzzleHttp\Middleware;
-use GuzzleHttp\HandlerStack;
+use Firebase\JWT\JWT;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Request;
-use Psr\Http\Message\RequestInterface;
-use Firebase\JWT\JWT;
-
-use OpenTok\Exception\Exception;
-use OpenTok\Exception\DomainException;
-use OpenTok\Exception\UnexpectedValueException;
-use OpenTok\Exception\AuthenticationException;
-
-use OpenTok\Exception\ArchiveException;
-use OpenTok\Exception\ArchiveDomainException;
-use OpenTok\Exception\ArchiveUnexpectedValueException;
 use OpenTok\Exception\ArchiveAuthenticationException;
-
-use OpenTok\Exception\BroadcastException;
-use OpenTok\Exception\BroadcastDomainException;
-use OpenTok\Exception\BroadcastUnexpectedValueException;
+use OpenTok\Exception\ArchiveDomainException;
+use OpenTok\Exception\ArchiveException;
+use OpenTok\Exception\ArchiveUnexpectedValueException;
+use OpenTok\Exception\AuthenticationException;
 use OpenTok\Exception\BroadcastAuthenticationException;
+use OpenTok\Exception\BroadcastDomainException;
+use OpenTok\Exception\BroadcastException;
+use OpenTok\Exception\BroadcastUnexpectedValueException;
+use OpenTok\Exception\DomainException;
+use OpenTok\Exception\Exception;
+use OpenTok\Exception\UnexpectedValueException;
 use OpenTok\MediaMode;
+use Psr\Http\Message\RequestInterface;
 
 // TODO: build this dynamically
 /** @internal */
@@ -33,8 +30,8 @@ define('OPENTOK_SDK_VERSION', '4.1.2-alpha.1');
 define('OPENTOK_SDK_USER_AGENT', 'OpenTok-PHP-SDK/' . OPENTOK_SDK_VERSION);
 
 /**
-* @internal
-*/
+ * @internal
+ */
 class Client
 {
     protected $apiKey;
@@ -64,8 +61,8 @@ class Client
             'base_uri' => $apiUrl,
             'handler' => $handlerStack,
             'headers' => [
-                'User-Agent' => $ua
-            ]
+                'User-Agent' => $ua,
+            ],
         ]);
 
         $this->configured = true;
@@ -82,7 +79,7 @@ class Client
             'ist' => 'project',
             'iss' => $this->apiKey,
             'iat' => time(), // this is in seconds
-            'exp' => time()+(5 * 60),
+            'exp' => time() + (5 * 60),
             'jti' => uniqid(),
         );
         return JWT::encode($token, $this->apiSecret);
@@ -96,7 +93,7 @@ class Client
         try {
             $response = $this->client->send($request, [
                 'debug' => $this->isDebug(),
-                'form_params' => $this->postFieldsForOptions($options)
+                'form_params' => $this->postFieldsForOptions($options),
             ]);
             $sessionXml = $this->getResponseXml($response);
         } catch (\RuntimeException $e) {
@@ -139,15 +136,15 @@ class Client
     public function startArchive($sessionId, $options)
     {
         // set up the request
-        $request = new Request('POST', '/v2/project/'.$this->apiKey.'/archive');
+        $request = new Request('POST', '/v2/project/' . $this->apiKey . '/archive');
 
         try {
             $response = $this->client->send($request, [
                 'debug' => $this->isDebug(),
                 'json' => array_merge(
-                    array( 'sessionId' => $sessionId ),
+                    array('sessionId' => $sessionId),
                     $options
-                )
+                ),
             ]);
             $archiveJson = json_decode($response->getBody(), true);
         } catch (\Exception $e) {
@@ -161,13 +158,13 @@ class Client
         // set up the request
         $request = new Request(
             'POST',
-            '/v2/project/'.$this->apiKey.'/archive/'.$archiveId.'/stop',
+            '/v2/project/' . $this->apiKey . '/archive/' . $archiveId . '/stop',
             ['Content-Type' => 'application/json']
         );
 
         try {
             $response = $this->client->send($request, [
-                'debug' => $this->isDebug()
+                'debug' => $this->isDebug(),
             ]);
             $archiveJson = json_decode($response->getBody(), true);
         } catch (\Exception $e) {
@@ -181,11 +178,11 @@ class Client
     {
         $request = new Request(
             'GET',
-            '/v2/project/'.$this->apiKey.'/archive/'.$archiveId
+            '/v2/project/' . $this->apiKey . '/archive/' . $archiveId
         );
         try {
             $response = $this->client->send($request, [
-                'debug' => $this->isDebug()
+                'debug' => $this->isDebug(),
             ]);
             $archiveJson = json_decode($response->getBody(), true);
         } catch (\Exception $e) {
@@ -199,12 +196,12 @@ class Client
     {
         $request = new Request(
             'DELETE',
-            '/v2/project/'.$this->apiKey.'/archive/'.$archiveId,
+            '/v2/project/' . $this->apiKey . '/archive/' . $archiveId,
             ['Content-Type' => 'application/json']
         );
         try {
             $response = $this->client->send($request, [
-                'debug' => $this->isDebug()
+                'debug' => $this->isDebug(),
             ]);
             if ($response->getStatusCode() != 204) {
                 json_decode($response->getBody(), true);
@@ -216,16 +213,16 @@ class Client
         return true;
     }
 
-    public function forceDisconnect($sessionId,$connectionId)
+    public function forceDisconnect($sessionId, $connectionId)
     {
         $request = new Request(
             'DELETE',
-            '/v2/project/'.$this->apiKey.'/session/'.$sessionId.'/connection/'.$connectionId,
+            '/v2/project/' . $this->apiKey . '/session/' . $sessionId . '/connection/' . $connectionId,
             ['Content-Type' => 'application/json']
         );
         try {
             $response = $this->client->send($request, [
-                'debug' => $this->isDebug()
+                'debug' => $this->isDebug(),
             ]);
             if ($response->getStatusCode() != 204) {
                 json_decode($response->getBody(), true);
@@ -239,7 +236,7 @@ class Client
 
     public function listArchives($offset, $count)
     {
-        $request = new Request('GET', '/v2/project/'.$this->apiKey.'/archive');
+        $request = new Request('GET', '/v2/project/' . $this->apiKey . '/archive');
         $queryParams = [];
         if ($offset != 0) {
             $queryParams['offset'] = $offset;
@@ -250,7 +247,7 @@ class Client
         try {
             $response = $this->client->send($request, [
                 'debug' => $this->isDebug(),
-                'query' => $queryParams
+                'query' => $queryParams,
             ]);
             $archiveListJson = json_decode($response->getBody(), true);
         } catch (\Exception $e) {
@@ -264,7 +261,7 @@ class Client
     {
         $request = new Request(
             'POST',
-            '/v2/project/'.$this->apiKey.'/broadcast'
+            '/v2/project/' . $this->apiKey . '/broadcast'
         );
 
         try {
@@ -272,8 +269,8 @@ class Client
                 'debug' => $this->isDebug(),
                 'json' => [
                     'sessionId' => $sessionId,
-                    'layout' => $options['layout']->jsonSerialize()
-                ]
+                    'layout' => $options['layout']->jsonSerialize(),
+                ],
             ]);
             $broadcastJson = json_decode($response->getBody(), true);
         } catch (\Exception $e) {
@@ -286,13 +283,13 @@ class Client
     {
         $request = new Request(
             'POST',
-            '/v2/project/'.$this->apiKey.'/broadcast/'.$broadcastId.'/stop',
+            '/v2/project/' . $this->apiKey . '/broadcast/' . $broadcastId . '/stop',
             ['Content-Type' => 'application/json']
         );
 
         try {
             $response = $this->client->send($request, [
-                'debug' => $this->isDebug()
+                'debug' => $this->isDebug(),
             ]);
             $broadcastJson = json_decode($response->getBody(), true);
         } catch (\Exception $e) {
@@ -305,11 +302,11 @@ class Client
     {
         $request = new Request(
             'GET',
-            '/v2/project/'.$this->apiKey.'/broadcast/'.$broadcastId
+            '/v2/project/' . $this->apiKey . '/broadcast/' . $broadcastId
         );
         try {
             $response = $this->client->send($request, [
-                'debug' => $this->isDebug()
+                'debug' => $this->isDebug(),
             ]);
             $broadcastJson = json_decode($response->getBody(), true);
         } catch (\Exception $e) {
@@ -322,11 +319,11 @@ class Client
     {
         $request = new Request(
             'GET',
-            '/v2/project/'.$this->apiKey.'/'.$resourceType.'/'.$resourceId.'/layout'
+            '/v2/project/' . $this->apiKey . '/' . $resourceType . '/' . $resourceId . '/layout'
         );
         try {
             $response = $this->client->send($request, [
-                'debug' => $this->isDebug()
+                'debug' => $this->isDebug(),
             ]);
             $layoutJson = json_decode($response->getBody(), true);
         } catch (\Exception $e) {
@@ -339,12 +336,12 @@ class Client
     {
         $request = new Request(
             'PUT',
-            '/v2/project/'.$this->apiKey.'/'.$resourceType.'/'.$resourceId.'/layout'
+            '/v2/project/' . $this->apiKey . '/' . $resourceType . '/' . $resourceId . '/layout'
         );
         try {
             $response = $this->client->send($request, [
                 'debug' => $this->isDebug(),
-                'json' => $layout->jsonSerialize()
+                'json' => $layout->jsonSerialize(),
             ]);
             $layoutJson = json_decode($response->getBody(), true);
         } catch (\Exception $e) {
@@ -357,12 +354,12 @@ class Client
     {
         $request = new Request(
             'PUT',
-            '/v2/project/'.$this->apiKey.'/session/'.$sessionId.'/stream/'.$streamId
+            '/v2/project/' . $this->apiKey . '/session/' . $sessionId . '/stream/' . $streamId
         );
         try {
             $response = $this->client->send($request, [
                 'debug' => $this->isDebug(),
-                'json' => $properties
+                'json' => $properties,
             ]);
             if ($response->getStatusCode() != 204) {
                 json_decode($response->getBody(), true);
@@ -379,8 +376,8 @@ class Client
             'token' => $token,
             'sip' => array(
                 'uri' => $sipUri,
-                'secure' => $options['secure']
-            )
+                'secure' => $options['secure'],
+            ),
         );
 
         if (isset($options) && array_key_exists('headers', $options) && sizeof($options['headers']) > 0) {
@@ -395,18 +392,56 @@ class Client
         }
 
         // set up the request
-        $request = new Request('POST', '/v2/project/'.$this->apiKey.'/call');
+        $request = new Request('POST', '/v2/project/' . $this->apiKey . '/call');
 
         try {
             $response = $this->client->send($request, [
                 'debug' => $this->isDebug(),
-                'json' => $body
+                'json' => $body,
             ]);
             $sipJson = json_decode($response->getBody(), true);
         } catch (\Exception $e) {
             $this->handleException($e);
         }
         return $sipJson;
+    }
+
+    public function listStreams($sessionId)
+    {
+        $request = new Request(
+            'GET',
+            '/v2/project/' . $this->apiKey . '/session/' . $sessionId . '/stream/'
+        );
+        try {
+            $response = $this->client->send($request, [
+                'debug' => $this->isDebug(),
+            ]);
+            $sessionListJson = json_decode($response->getBody(), true);
+        } catch (\Exception $e) {
+            $this->handleException($e);
+        }
+        return $sessionListJson;
+    }
+
+    public function signalSession($sessionId, $body)
+    {
+        $request = new Request(
+            'POST',
+            '/v2/project/' . $this->apiKey . '/session/' . $sessionId . '/signal',
+            ['Content-Type' => 'application/json']
+        );
+
+        try {
+            $response = $this->client->send($request, [
+                'debug' => $this->isDebug(),
+                'json' => $options,
+            ]);
+            $responseJSON = json_decode($response->getBody(), true);
+        } catch (\Exception $e) {
+            $this->handleBroadcastException($e);
+        }
+
+        return true;
     }
 
     // Helpers
@@ -442,7 +477,7 @@ class Client
                 );
             } else {
                 throw new DomainException(
-                    'The OpenTok API request failed: '. json_decode($e->getResponse()->getBody(true))->message,
+                    'The OpenTok API request failed: ' . json_decode($e->getResponse()->getBody(true))->message,
                     null,
                     $e
                 );
@@ -494,6 +529,6 @@ class Client
 
     private function isDebug()
     {
-      return defined('OPENTOK_DEBUG');
+        return defined('OPENTOK_DEBUG');
     }
 }
