@@ -358,6 +358,26 @@ class OpenTok
         return new Archive($archiveData, array('client' => $this->client));
     }
 
+    public function getArchiveLayout($archiveId)
+    {
+        Validators::validateArchiveId($archiveId);
+
+        $layoutData = $this->client->getLayout($archiveId, 'archive');
+        return Layout::fromData($layoutData);
+    }
+
+    public function updateArchiveLayout($archiveId, $layout)
+    {
+        Validators::validateArchiveId($archiveId);
+        Validators::validateLayout($layout);
+
+        // TODO: platform implementation does not meet API Review spec
+        // $layoutData = $this->client->updateLayout($broadcastId, $layout, 'broadcast');
+        // return Layout::fromData($layoutData);
+
+        $this->client->updateLayout($archiveId, $layout, 'archive');
+    }
+
     /**
      * Deletes an OpenTok archive.
      * <p>
