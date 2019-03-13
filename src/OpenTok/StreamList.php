@@ -11,6 +11,7 @@ class StreamList
 
     /** @ignore */
     private $data;
+    private $items;
 
     /** @ignore */
     public function __construct($streamListData)
@@ -31,8 +32,8 @@ class StreamList
      */
     public function getItems()
     {
-        if (!$this->items) {
-            $items = array();
+        if (!is_array($this->items)) {
+            $items = [];
             foreach ($this->data['items'] as $streamData) {
                 $items[] = new Stream($streamData);
             }
