@@ -3,12 +3,13 @@
 namespace OpenTok;
 
 /**
-* An object, returned by the <a href="OpenTok.html#method_listStreams">OpenTok.listStreams()</a>
-* method, representing a list of streams in an OpenTok session.
-*/
-class StreamList {
+ * An object, returned by the <a href="OpenTok.html#method_listStreams">OpenTok.listStreams()</a>
+ * method, representing a list of streams in an OpenTok session.
+ */
+class StreamList
+{
 
-  /** @ignore */
+    /** @ignore */
     private $data;
 
     /** @ignore */
@@ -32,14 +33,13 @@ class StreamList {
     {
         if (!$this->items) {
             $items = array();
-            foreach($this->data['items'] as $streamData) {
+            foreach ($this->data['items'] as $streamData) {
                 $items[] = new Stream($streamData);
             }
             $this->items = $items;
         }
         return $this->items;
     }
-
 
     public function jsonSerialize()
     {
